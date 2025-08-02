@@ -15,23 +15,6 @@
   th { background: #eee; }
 </style>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCXB6lJFAVcBNQ5VFp0Pbr-wuZbEp5m4AQ",
-    authDomain: "caraquinhas-drop.firebaseapp.com",
-    projectId: "caraquinhas-drop",
-    storageBucket: "caraquinhas-drop.appspot.com",
-    messagingSenderId: "102170747527",
-    appId: "1:102170747527:web:a21c2bbd0fcefd31684e22"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-</script>
-
 </head>
 <body>
   <!-- 🔹 PARTE 2: Interface visual (Login, Admin, Evento, Fila, Sorteio) -->
@@ -124,38 +107,48 @@
 
   <!-- 🔹 PARTE 3: Script funcional -->
    <script type="module">
-  import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  const db = getFirestore(getApp());
+// Inicializar Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyCXB6lJFAVcBNQ5VFp0Pbr-wuZbEp5m4AQ",
+  authDomain: "caraquinhas-drop.firebaseapp.com",
+  projectId: "caraquinhas-drop",
+  storageBucket: "caraquinhas-drop.appspot.com",
+  messagingSenderId: "102170747527",
+  appId: "1:102170747527:web:a21c2bbd0fcefd31684e22"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  // Elementos HTML
-  const loginForm = document.getElementById("login-form");
-  const jogadorBox = document.getElementById("jogador-box");
-  const nickExibido = document.getElementById("nick-exibido");
+// Elementos HTML
+const loginForm = document.getElementById("login-form");
+const jogadorBox = document.getElementById("jogador-box");
+const nickExibido = document.getElementById("nick-exibido");
 
-  const adminForm = document.getElementById("admin-form");
-  const adminPanel = document.getElementById("admin-panel");
+const adminForm = document.getElementById("admin-form");
+const adminPanel = document.getElementById("admin-panel");
 
-  const cadastroJogadorForm = document.getElementById("cadastro-jogador-form");
-  const cadastroItemForm = document.getElementById("cadastro-item-form");
+const cadastroJogadorForm = document.getElementById("cadastro-jogador-form");
+const cadastroItemForm = document.getElementById("cadastro-item-form");
 
-  const eventoForm = document.getElementById("evento-form");
-  const eventoBox = document.getElementById("evento-box");
-  const eventoNomeSpan = document.getElementById("evento-nome");
-  const eventoHorarioTexto = document.getElementById("evento-horario-texto");
+const eventoForm = document.getElementById("evento-form");
+const eventoBox = document.getElementById("evento-box");
+const eventoNomeSpan = document.getElementById("evento-nome");
+const eventoHorarioTexto = document.getElementById("evento-horario-texto");
 
-  const filaForm = document.getElementById("fila-form");
-  const tabelaFila = document.getElementById("tabela-fila");
-  const sortearBtn = document.getElementById("sortear");
-  const vencedorP = document.getElementById("vencedor");
-  const historico = document.getElementById("historico");
+const filaForm = document.getElementById("fila-form");
+const tabelaFila = document.getElementById("tabela-fila");
+const sortearBtn = document.getElementById("sortear");
+const vencedorP = document.getElementById("vencedor");
+const historico = document.getElementById("historico");
 
-  let eventoId = "";
-  let fila = [];
+let eventoId = "";
+let fila = [];
 
-  // Login Jogador
-  loginForm.addEventListener("submit", async (e) => {
+// Login Jogador
+loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const nick = document.getElementById("nick-login").value.trim();
   const docRef = doc(db, "jogadores", nick);
@@ -172,113 +165,110 @@
   }
 });
 
+// Login Admin
+adminForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const senha = document.getElementById("senha-admin").value;
+  if (senha === "f3l1p3") {
+    adminPanel.style.display = "block";
+    adminForm.parentElement.style.display = "none";
+  } else {
+    alert("Senha incorreta!");
+  }
+});
 
-  // Login Admin
-  adminForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const senha = document.getElementById("senha-admin").value;
-    if (senha === "f3l1p3") {
-      adminPanel.style.display = "block";
-      adminForm.parentElement.style.display = "none";
-    } else {
-      alert("Senha incorreta!");
-    }
+// Cadastro Jogador
+cadastroJogadorForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nick = document.getElementById("nick").value.trim();
+  const classe = document.getElementById("classe").value.trim();
+  const cp = parseInt(document.getElementById("cp").value);
+  const nivel = parseInt(document.getElementById("nivel").value);
+  await setDoc(doc(db, "jogadores", nick), { classe, cp, nivel });
+  alert("Jogador cadastrado!");
+  cadastroJogadorForm.reset();
+});
+
+// Cadastro Item
+cadastroItemForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nome = document.getElementById("item-nome").value.trim();
+  const cpMin = parseInt(document.getElementById("item-cp").value);
+  const nivelMin = parseInt(document.getElementById("item-nivel").value);
+  await setDoc(doc(db, "itens", nome), { cpMin, nivelMin });
+  alert("Item cadastrado!");
+  cadastroItemForm.reset();
+});
+
+// Criar Evento
+eventoForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nome = document.getElementById("boss-nome").value.trim();
+  const horario = document.getElementById("evento-horario").value;
+  const eventoRef = await addDoc(collection(db, "eventos"), { nome, horario, criadoEm: new Date() });
+  eventoId = eventoRef.id;
+
+  eventoNomeSpan.textContent = nome;
+  eventoHorarioTexto.textContent = new Date(horario).toLocaleString();
+  eventoBox.style.display = "block";
+
+  fila = [];
+  tabelaFila.innerHTML = "";
+  historico.innerHTML = "";
+  vencedorP.textContent = "";
+});
+
+// Adicionar à Fila
+filaForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nick = document.getElementById("nick-fila").value.trim();
+  const ordem = fila.length + 1;
+  const jogador = { nick, ordem, faltas: 0 };
+  fila.push(jogador);
+  await setDoc(doc(db, `eventos/${eventoId}/fila`, nick), jogador);
+  atualizarTabela();
+  filaForm.reset();
+});
+
+// Atualizar Tabela
+function atualizarTabela() {
+  tabelaFila.innerHTML = "";
+  fila.sort((a, b) => a.ordem - b.ordem);
+  fila.forEach(jogador => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${jogador.ordem}</td><td>${jogador.nick}</td><td>${jogador.faltas}</td>`;
+    tabelaFila.appendChild(tr);
+  });
+}
+
+// Sorteio
+sortearBtn.addEventListener("click", async () => {
+  if (fila.length === 0) return alert("Fila vazia");
+  const sorteado = fila[0];
+  vencedorP.textContent = `Sorteado: ${sorteado.nick}`;
+
+  await addDoc(collection(db, `eventos/${eventoId}/historico`), {
+    nick: sorteado.nick, data: new Date()
   });
 
-  // Cadastro de Jogador
-  cadastroJogadorForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const nick = document.getElementById("nick").value.trim();
-    const classe = document.getElementById("classe").value.trim();
-    const cp = parseInt(document.getElementById("cp").value);
-    const nivel = parseInt(document.getElementById("nivel").value);
-    await setDoc(doc(db, "jogadores", nick), { classe, cp, nivel });
-    alert("Jogador cadastrado!");
-    cadastroJogadorForm.reset();
-  });
+  historico.innerHTML += `<li>${sorteado.nick} - ${new Date().toLocaleString()}</li>`;
+  sorteado.faltas += 1;
 
-  // Cadastro de Item
-  cadastroItemForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const nome = document.getElementById("item-nome").value.trim();
-    const cpMin = parseInt(document.getElementById("item-cp").value);
-    const nivelMin = parseInt(document.getElementById("item-nivel").value);
-    await setDoc(doc(db, "itens", nome), { cpMin, nivelMin });
-    alert("Item cadastrado!");
-    cadastroItemForm.reset();
-  });
-
-  // Criação de Evento
-  eventoForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const nome = document.getElementById("boss-nome").value.trim();
-    const horario = document.getElementById("evento-horario").value;
-    const eventoRef = await addDoc(collection(db, "eventos"), { nome, horario, criadoEm: new Date() });
-    eventoId = eventoRef.id;
-
-    eventoNomeSpan.textContent = nome;
-    eventoHorarioTexto.textContent = new Date(horario).toLocaleString();
-    eventoBox.style.display = "block";
-
-    fila = [];
-    tabelaFila.innerHTML = "";
-    historico.innerHTML = "";
-    vencedorP.textContent = "";
-  });
-
-  // Adicionar jogador à fila
-  filaForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const nick = document.getElementById("nick-fila").value.trim();
-    const ordem = fila.length + 1;
-    const jogador = { nick, ordem, faltas: 0 };
-    fila.push(jogador);
-    await setDoc(doc(db, `eventos/${eventoId}/fila`, nick), jogador);
-    atualizarTabela();
-    filaForm.reset();
-  });
-
-  // Atualizar Tabela Fila
-  function atualizarTabela() {
-    tabelaFila.innerHTML = "";
-    fila.sort((a, b) => a.ordem - b.ordem);
-    fila.forEach(jogador => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${jogador.ordem}</td><td>${jogador.nick}</td><td>${jogador.faltas}</td>`;
-      tabelaFila.appendChild(tr);
-    });
+  if (sorteado.faltas >= 3) {
+    fila.push(fila.shift());
+    sorteado.ordem = fila.length;
+  } else {
+    fila[0] = sorteado;
   }
 
-  // Sorteio automático
-  sortearBtn.addEventListener("click", async () => {
-    if (fila.length === 0) return alert("Fila vazia");
+  await setDoc(doc(db, `eventos/${eventoId}/fila`, sorteado.nick), {
+    faltas: sorteado.faltas, ordem: sorteado.ordem
+  });
 
-    const sorteado = fila[0];
-    vencedorP.textContent = `Sorteado: ${sorteado.nick}`;
+  atualizarTabela();
+});
 
-    await addDoc(collection(db, `eventos/${eventoId}/historico`), {
-      nick: sorteado.nick, data: new Date()
-    });
-
-    historico.innerHTML += `<li>${sorteado.nick} - ${new Date().toLocaleString()}</li>`;
-
-    sorteado.faltas += 1;
-
-    if (sorteado.faltas >= 3) {
-      fila.push(fila.shift());
-      sorteado.ordem = fila.length;
-      await updateDoc(doc(db, `eventos/${eventoId}/fila`, sorteado.nick), {
-        faltas: sorteado.faltas, ordem: sorteado.ordem
-      });
-    } else {
-      await updateDoc(doc(db, `eventos/${eventoId}/fila`, sorteado.nick), {
-        faltas: sorteado.faltas
-      });
-    }
-
-    atualizarTabela();
-
-    // Mostrar itens disponíveis ao jogador
+// Mostrar Itens Disponíveis
 async function mostrarItensElegiveis(nick, jogador) {
   const itensDiv = document.getElementById("itens-disponiveis");
   itensDiv.innerHTML = "";
@@ -291,7 +281,7 @@ async function mostrarItensElegiveis(nick, jogador) {
       const div = document.createElement("div");
       div.innerHTML = `
         <input type="radio" name="item" value="${docSnap.id}" />
-        ${docSnap.id} (CP: ${item.cpMin}, Nível: ${item.nivelMin})
+        ${docSnap.id} (CP: ${formatarCP(item.cpMin)}, Nível: ${item.nivelMin})
       `;
       itensDiv.appendChild(div);
     }
@@ -318,7 +308,7 @@ async function mostrarItensElegiveis(nick, jogador) {
   };
 }
 
-// Mostrar histórico do jogador
+// Histórico do Jogador
 async function carregarHistoricoJogador(nick) {
   const histUl = document.getElementById("historico-jogador");
   histUl.innerHTML = "";
@@ -335,7 +325,12 @@ async function carregarHistoricoJogador(nick) {
   }
 }
 
-  });
+// Formatar CP
+function formatarCP(valor) {
+  if (valor >= 1e9) return (valor / 1e9).toFixed(1) + "B";
+  if (valor >= 1e6) return (valor / 1e6).toFixed(1) + "M";
+  return valor.toString();
+}
 </script>
 
 </body>

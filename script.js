@@ -93,3 +93,21 @@ async function listarItens() {
     });
   });
 }
+
+// Login Admin
+const adminForm = document.getElementById("admin-form");
+const adminPanel = document.getElementById("admin-panel");
+
+adminForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const senha = document.getElementById("senha-admin").value;
+  if (senha === "f3l1p3") {
+    adminPanel.style.display = "block";
+    adminForm.parentElement.style.display = "none";
+
+    await listarJogadores();  // ✅ carrega lista após login
+    await listarItens();      // ✅ carrega itens após login
+  } else {
+    alert("Senha incorreta!");
+  }
+});

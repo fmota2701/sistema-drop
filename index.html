@@ -113,11 +113,10 @@
 
 
   <!-- 🔹 PARTE 3: Script funcional -->
-   <script type="module">
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Inicializar Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCXB6lJFAVcBNQ5VFp0Pbr-wuZbEp5m4AQ",
   authDomain: "caraquinhas-drop.firebaseapp.com",
@@ -126,6 +125,11 @@ const firebaseConfig = {
   messagingSenderId: "102170747527",
   appId: "1:102170747527:web:a21c2bbd0fcefd31684e22"
 };
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 👇 Continue aqui com seu código...
 
 async function listarJogadores() {
   const lista = document.getElementById("lista-jogadores");
@@ -139,19 +143,10 @@ async function listarJogadores() {
   });
 }
 
-// Chamar ao carregar admin painel
-if (adminPanel) listarJogadores();
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
 // Elementos HTML
 const loginForm = document.getElementById("login-form");
 const jogadorBox = document.getElementById("jogador-box");
 const nickExibido = document.getElementById("nick-exibido");
-
-const adminForm = document.getElementById("admin-form");
-const adminPanel = document.getElementById("admin-panel");
 
 const cadastroJogadorForm = document.getElementById("cadastro-jogador-form");
 const cadastroItemForm = document.getElementById("cadastro-item-form");

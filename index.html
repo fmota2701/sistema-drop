@@ -58,11 +58,14 @@
   <h2>Admin Painel</h2>
   <h3>Cadastrar Jogador</h3>
   <form id="cadastro-jogador-form">
-    <input type="text" id="nick" placeholder="Nick" required />
-    <input type="text" id="classe" placeholder="Classe" required />
-    <input type="number" id="cp" placeholder="CP" required />
-    <input type="number" id="nivel" placeholder="Nível" required />
-    <button type="submit">Cadastrar Jogador</button>
+  <input type="text" id="nick" placeholder="Nick" required />
+  <input type="text" id="classe" placeholder="Classe" required />
+  <input type="number" id="cp" placeholder="CP (ex: 34000000)" required />
+  <input type="number" id="nivel" placeholder="Nível" required />
+  <button type="submit">Cadastrar Jogador</button>
+</form>
+<p id="mensagem-jogador"></p> <!-- ✅ Mensagem aparece aqui -->
+
   </form>
 
   <h3>Cadastrar Item</h3>
@@ -80,6 +83,10 @@
     <button type="submit">Criar Evento</button>
   </form>
 </div>
+
+<h4>Jogadores Cadastrados</h4>
+<ul id="lista-jogadores"></ul>
+
 
 <!-- Painel Evento -->
 <div class="box" id="evento-box" style="display:none;">
@@ -119,6 +126,22 @@ const firebaseConfig = {
   messagingSenderId: "102170747527",
   appId: "1:102170747527:web:a21c2bbd0fcefd31684e22"
 };
+
+async function listarJogadores() {
+  const lista = document.getElementById("lista-jogadores");
+  lista.innerHTML = "";
+  const snap = await getDocs(collection(db, "jogadores"));
+  snap.forEach(docSnap => {
+    const j = docSnap.data();
+    const li = document.createElement("li");
+    li.textContent = `${docSnap.id} - Classe: ${j.classe}, CP: ${formatarCP(j.cp)}, Nivel: ${j.nivel}`;
+    lista.appendChild(li);
+  });
+}
+
+// Chamar ao carregar admin painel
+if (adminPanel) listarJogadores();
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -187,14 +210,14 @@ cadastroJogadorForm.addEventListener("submit", async (e) => {
 
   try {
     await setDoc(doc(db, "jogadores", nick), { classe, cp, nivel });
-    alert("✅ Jogador cadastrado com sucesso!");
+    document.getElementById("mensagem-jogador").textContent = "Jogador cadastrado com sucesso!";
     cadastroJogadorForm.reset();
+    await listarJogadores();  // ⬅ adiciona isso
   } catch (error) {
+    document.getElementById("mensagem-jogador").textContent = "Erro ao cadastrar jogador.";
     console.error("Erro ao cadastrar jogador:", error);
-    alert("❌ Erro ao cadastrar jogador.");
   }
 });
-
 
 // Cadastro Item
 cadastroItemForm.addEventListener("submit", async (e) => {
@@ -345,6 +368,7 @@ function formatarCP(valor) {
   if (valor >= 1e6) return (valor / 1e6).toFixed(1) + "M";
   return valor.toString();
 }
+
 </script>
 
 </body>

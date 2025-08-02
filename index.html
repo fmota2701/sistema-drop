@@ -207,14 +207,21 @@ cadastroJogadorForm.addEventListener("submit", async (e) => {
 
   try {
     await setDoc(doc(db, "jogadores", nick), { classe, cp, nivel });
-    document.getElementById("mensagem-jogador").textContent = "Jogador cadastrado com sucesso!";
+    document.getElementById("mensagem-jogador").textContent = "✅ Jogador cadastrado com sucesso!";
     cadastroJogadorForm.reset();
-    await listarJogadores();  // ⬅ adiciona isso
+    
+    try {
+      await listarJogadores();  // tentativa separada
+    } catch (listError) {
+      console.warn("Erro ao listar jogadores (não afeta cadastro):", listError);
+    }
+
   } catch (error) {
-    document.getElementById("mensagem-jogador").textContent = "Erro ao cadastrar jogador.";
+    document.getElementById("mensagem-jogador").textContent = "❌ Erro ao cadastrar jogador.";
     console.error("Erro ao cadastrar jogador:", error);
   }
 });
+
 
 // Cadastro Item
 cadastroItemForm.addEventListener("submit", async (e) => {

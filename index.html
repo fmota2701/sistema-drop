@@ -6,10 +6,7 @@
   <title>Sistema de Drop</title>
   <link rel="stylesheet" href="estilo.css" />
 </head>
-
 <body>
-
-  <!-- Login Jogador -->
   <div class="box" id="login-box">
     <h2>Login do Jogador</h2>
     <form id="login-form">
@@ -18,21 +15,16 @@
     </form>
   </div>
 
-  <!-- Painel Jogador -->
   <div class="box" id="jogador-box" style="display:none;">
     <h2>Bem-vindo, <span id="nick-exibido"></span></h2>
-
     <h3>Itens Disponíveis</h3>
     <div id="itens-disponiveis"></div>
-
     <button id="participar-btn" disabled>Participar do Sorteio</button>
     <p id="mensagem-participacao"></p>
-
     <h3>Histórico de Sorteios</h3>
     <ul id="historico-jogador"></ul>
   </div>
 
-  <!-- Login Admin -->
   <div class="box" id="admin-login">
     <h2>Admin Login</h2>
     <form id="admin-form">
@@ -41,10 +33,8 @@
     </form>
   </div>
 
-  <!-- Painel Admin -->
   <div class="box" id="admin-panel" style="display:none;">
     <h2>Admin Painel</h2>
-
     <h3>Cadastrar Jogador</h3>
     <form id="cadastro-jogador-form">
       <input type="text" id="nick" placeholder="Nick" required />
@@ -54,12 +44,8 @@
       <button type="submit">Cadastrar Jogador</button>
     </form>
     <p id="mensagem-jogador"></p>
-
     <h3>Jogadores Cadastrados</h3>
-    <ul id="lista-jogadores">
-      <!-- Jogadores serão listados aqui -->
-    </ul>
-
+    <ul id="lista-jogadores"></ul>
     <h3>Cadastrar Item</h3>
     <form id="cadastro-item-form">
       <input type="text" id="item-nome" placeholder="Item" required />
@@ -67,12 +53,8 @@
       <input type="number" id="item-nivel" placeholder="Nível Mínimo" required />
       <button type="submit">Cadastrar Item</button>
     </form>
-
     <h3>Itens Cadastrados</h3>
-    <ul id="lista-itens">
-      <!-- Itens serão listados aqui -->
-    </ul>
-
+    <ul id="lista-itens"></ul>
     <h3>Criar Evento</h3>
     <form id="evento-form">
       <input type="text" id="boss-nome" placeholder="Boss" required />
@@ -81,33 +63,24 @@
     </form>
   </div>
 
-  <!-- Painel Evento -->
   <div class="box" id="evento-box" style="display:none;">
     <h2>Evento: <span id="evento-nome"></span></h2>
     <p>Horário: <span id="evento-horario-texto"></span></p>
-
     <h3>Fila de Jogadores</h3>
     <form id="fila-form">
       <input type="text" id="nick-fila" placeholder="Nick" required />
       <button type="submit">Adicionar</button>
     </form>
-
     <table>
-      <thead>
-        <tr><th>Ordem</th><th>Nick</th><th>Faltas</th></tr>
-      </thead>
+      <thead><tr><th>Ordem</th><th>Nick</th><th>Faltas</th></tr></thead>
       <tbody id="tabela-fila"></tbody>
     </table>
-
     <button id="sortear">Sortear</button>
     <p id="vencedor"></p>
-
     <h3>Histórico</h3>
     <ul id="historico"></ul>
   </div>
 
-  <!-- Script -->
   <script type="module" src="script.js"></script>
-
 </body>
 </html>

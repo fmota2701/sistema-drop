@@ -64,9 +64,10 @@
   <input type="number" id="nivel" placeholder="Nível" required />
   <button type="submit">Cadastrar Jogador</button>
 </form>
-<p id="mensagem-jogador"></p> <!-- ✅ Mensagem aparece aqui -->
+<p id="mensagem-jogador"></p>
 
-  </form>
+  <h3>Jogadores Cadastrados</h3>
+  <ul id="lista-jogadores"></ul>
 
   <h3>Cadastrar Item</h3>
   <form id="cadastro-item-form">
@@ -76,6 +77,9 @@
     <button type="submit">Cadastrar Item</button>
   </form>
 
+  <h3>Itens Cadastrados</h3>
+  <ul id="lista-itens"></ul>
+
   <h3>Criar Evento</h3>
   <form id="evento-form">
     <input type="text" id="boss-nome" placeholder="Boss" required />
@@ -83,10 +87,6 @@
     <button type="submit">Criar Evento</button>
   </form>
 </div>
-
-<h4>Jogadores Cadastrados</h4>
-<ul id="lista-jogadores"></ul>
-
 
 <!-- Painel Evento -->
 <div class="box" id="evento-box" style="display:none;">

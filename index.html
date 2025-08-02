@@ -184,10 +184,17 @@ cadastroJogadorForm.addEventListener("submit", async (e) => {
   const classe = document.getElementById("classe").value.trim();
   const cp = parseInt(document.getElementById("cp").value);
   const nivel = parseInt(document.getElementById("nivel").value);
-  await setDoc(doc(db, "jogadores", nick), { classe, cp, nivel });
-  alert("Jogador cadastrado!");
-  cadastroJogadorForm.reset();
+
+  try {
+    await setDoc(doc(db, "jogadores", nick), { classe, cp, nivel });
+    alert("✅ Jogador cadastrado com sucesso!");
+    cadastroJogadorForm.reset();
+  } catch (error) {
+    console.error("Erro ao cadastrar jogador:", error);
+    alert("❌ Erro ao cadastrar jogador.");
+  }
 });
+
 
 // Cadastro Item
 cadastroItemForm.addEventListener("submit", async (e) => {
@@ -195,10 +202,17 @@ cadastroItemForm.addEventListener("submit", async (e) => {
   const nome = document.getElementById("item-nome").value.trim();
   const cpMin = parseInt(document.getElementById("item-cp").value);
   const nivelMin = parseInt(document.getElementById("item-nivel").value);
-  await setDoc(doc(db, "itens", nome), { cpMin, nivelMin });
-  alert("Item cadastrado!");
-  cadastroItemForm.reset();
+
+  try {
+    await setDoc(doc(db, "itens", nome), { cpMin, nivelMin });
+    alert("✅ Item cadastrado com sucesso!");
+    cadastroItemForm.reset();
+  } catch (error) {
+    console.error("Erro ao cadastrar item:", error);
+    alert("❌ Erro ao cadastrar item.");
+  }
 });
+
 
 // Criar Evento
 eventoForm.addEventListener("submit", async (e) => {
